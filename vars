@@ -1,0 +1,8 @@
+hcloud_token = "--"
+name = "t1"
+image = "ubuntu-20.04"
+type = "cloud"
+public_ipv4 = "true"
+server_type = "cx11"
+network_zone = "eu-central"
+location = "nbg1"

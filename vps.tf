@@ -87,7 +87,7 @@ resource "hcloud_network_subnet" "network-subnet" {
 
 resource "hcloud_server" "manage" {
   count = 1
-  name        = "m1"
+  name        = "manage1"
   server_type = var.server_type
   image       = var.image
   location    = var.location
@@ -108,6 +108,7 @@ resource "hcloud_server" "nginx" {
   image       = var.image
   location    = var.location
   ssh_keys  = ["${data.hcloud_ssh_key.ssh_key.id}"]
+  user_data = "${local.cloud_config}"
 
   network {
     network_id = hcloud_network.private1.id
@@ -124,6 +125,7 @@ resource "hcloud_server" "master" {
   image       = var.image
   location    = var.location
   ssh_keys  = ["${data.hcloud_ssh_key.ssh_key.id}"]
+  user_data = "${local.cloud_config}"
 
   network {
     network_id = hcloud_network.private1.id
@@ -138,6 +140,7 @@ resource "hcloud_server" "etcd" {
   image       = var.image
   location    = var.location
   ssh_keys  = ["${data.hcloud_ssh_key.ssh_key.id}"]
+  user_data = "${local.cloud_config}"
 
   network {
     network_id = hcloud_network.private1.id
@@ -154,6 +157,7 @@ resource "hcloud_server" "worker" {
   image       = var.image
   location    = var.location
   ssh_keys  = ["${data.hcloud_ssh_key.ssh_key.id}"]
+  user_data = "${local.cloud_config}"
 
   network {
     network_id = hcloud_network.private1.id
@@ -172,7 +176,7 @@ resource "hcloud_server" "percona" {
   image       = var.image
   location    = var.location
   ssh_keys  = ["${data.hcloud_ssh_key.ssh_key.id}"]
-
+  user_data = "${local.cloud_config}"
   network {
     network_id = hcloud_network.private1.id
     ip         = "192.168.10.${count.index + 200}"
@@ -189,7 +193,7 @@ resource "hcloud_server" "gitlab" {
   image       = var.image
   location    = var.location
   ssh_keys  = ["${data.hcloud_ssh_key.ssh_key.id}"]
-
+  user_data = "${local.cloud_config}"
   network {
     network_id = hcloud_network.private1.id
     ip         = "192.168.10.${count.index + 37}"
@@ -204,7 +208,7 @@ resource "hcloud_server" "runner" {
   image       = var.image
   location    = var.location
   ssh_keys  = ["${data.hcloud_ssh_key.ssh_key.id}"]
-
+  user_data = "${local.cloud_config}"
   network {
     network_id = hcloud_network.private1.id
     ip         = "192.168.10.${count.index + 110}"
@@ -217,7 +221,7 @@ resource "hcloud_server" "monitoring" {
   image       = var.image
   location    = var.location
   ssh_keys  = ["${data.hcloud_ssh_key.ssh_key.id}"]
-
+  user_data = "${local.cloud_config}"
 
 
   network {

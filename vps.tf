@@ -39,15 +39,38 @@ variable "type" {
   type = string
   default = "cloud"
 }
+
 variable "image" {
   type = string
   default = "ubuntu-20.04"
 }
 
+variable "root_password" {
+  type = string
+}
 
 
 data "hcloud_ssh_key" "ssh_key" {
   fingerprint = "53:70:64:23:e2:08:92:25:97:de:fb:8a:7f:52:27:ac"
+}
+
+locals {
+  cloud_config = <<EOF
+#cloud-config
+password: ${var.root_password}
+chpasswd: { expire: False }
+ssh_pwauth: True
+runcmd:
+  - ssh-keygen -t rsa -b 2048 -f /root/.ssh/my_rsa_key
+  - apt update && apt upgrade
+  - apt install -y net-tools netcat ansible
+  - sudo apt-get install apt-transport-https ca-certificates curl gnupg-agent software-properties-common -y
+  - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+  - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+  - sudo apt-get update
+  - sudo apt-get install docker-ce docker-ce-cli containerd.io -y
+  - reboot
+EOF
 }
 
 resource "hcloud_network" "private1" {
@@ -69,6 +92,8 @@ resource "hcloud_server" "manage" {
   image       = var.image
   location    = var.location
   ssh_keys  = ["${data.hcloud_ssh_key.ssh_key.id}"]
+  user_data = "${local.cloud_config}"
+
 
   network {
     network_id = hcloud_network.private1.id
@@ -192,6 +217,7 @@ resource "hcloud_server" "monitoring" {
   image       = var.image
   location    = var.location
   ssh_keys  = ["${data.hcloud_ssh_key.ssh_key.id}"]
+
 
 
   network {

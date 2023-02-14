@@ -1,2 +1,3 @@
 terraform init
-terraform apply  -var-file="vars"
+./init.sh
+terraform apply -target='hcloud_server.manage'  -var-file='vars'
